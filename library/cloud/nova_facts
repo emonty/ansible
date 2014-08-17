@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-# vim: ts=4:expandtab:au BufWritePost
-# (c) 2014 Patrick "CaptTofu" Galbraith <patg@patg.net> 
+# (c) 2014 Patrick "CaptTofu" Galbraith <patg@patg.net>
+# (c) 2014 Hewlett-Packard Development Company, L.P.
 # Code also from rax_facts, docker_facts and the primary nova module
 #
 #
@@ -64,9 +64,6 @@ EXAMPLES = '''
         region_name: region-b.geo-1
         module: nova_facts
         id: f062f85b-5586-479a-b6a2-647385b04715
-        key_name: test
-        wait_for: 200
-        security_groups: default
 
     - name: Get facts about instance with ip adress of 10.0.0.102
       local_action:
@@ -104,7 +101,7 @@ except ImportError:
     print("failed=True msg='novaclient is required for this module'")
 
 
-class NovaFacts:
+class NovaFacts(object):
 
     def __init__(self, module):
         self.module = module
@@ -117,15 +114,14 @@ class NovaFacts:
                                        module.params['login_password'],
                                        module.params['login_tenant_name'],
                                        module.params['auth_url'],
-                                       region_name=
-                                       module.params['region_name'],
+                                       region_name=module.params['region_name'],
                                        service_type='compute')
         try:
             self.nova.authenticate()
-        except exceptions.Unauthorized, e:
+        except exceptions.Unauthorized as e:
             module.fail_json(msg="Invalid OpenStack Nova credentials.: %s" %
                              e.message)
-        except exceptions.AuthorizationFailure, e:
+        except exceptions.AuthorizationFailure as e:
             module.fail_json(msg="Unable to authorize user: %s" % e.message)
 
         if self.nova is None:
@@ -150,8 +146,7 @@ class NovaFacts:
         dicts = {}
         for obj in object_list:
             dictn = self.object_to_dict(obj)
-            if name is not None and \
-               name != dictn['nova_name']:
+            if name is not None and name != dictn['nova_name']:
                     next
             else:
                 dicts[dictn['nova_name']] = dictn
@@ -167,12 +162,12 @@ class NovaFacts:
         if (self.id is not None):
             try:
                 instance_obj_list.append(self.nova.servers.get(self.id))
-            except Exception, e:
+            except Exception as e:
                 module.fail_json(msg='%s' % e.message)
         else:
             try:
                 instance_obj_list = self.nova.servers.list()
-            except Exception, e:
+            except Exception as e:
                 module.fail_json(msg='%s' % e.message)
 
         instances_dict = self.object_list_to_dict(instance_obj_list, self.name)
@@ -180,8 +175,7 @@ class NovaFacts:
         # this is specific to instances, hence not in object_list_to_dict()
         if self.address is not None:
             for iname, instance_dict in instances_dict.iteritems():
-                for netname, networks in \
-                        instance_dict['nova_networks'].iteritems():
+                for netname, networks in instance_dict['nova_networks'].iteritems():
                     for address in networks:
                         if self.address == address:
                             instances_dict = {iname: instances_dict[iname]}
@@ -196,12 +190,12 @@ class NovaFacts:
             image_id = self.images
             try:
                 image_obj_list.append(self.nova.images.get(image_id))
-            except Exception, e:
+            except Exception as e:
                 module.fail_json(msg='%s' % e. message)
         else:
             try:
                 image_obj_list = self.nova.images.list()
-            except Exception, e:
+            except Exception as e:
                 module.fail_json(msg='%s' % e. message)
 
         images_dict = self.object_list_to_dict(image_obj_list, image_id)
@@ -224,30 +218,15 @@ class NovaFacts:
 
 def main():
     if not HAS_NOVA_CLIENT:
-        module.fail_json(msg=
-                         'The nova python client is required \
-                         for this module')
-    argument_spec = dict(
+        module.fail_json(msg='The python novaclient is required for this module')
+
+    argument_spec = openstack_argument_spec()
+    argument_spec.update(dict(
         id=dict(default=None),
         name=dict(default=None),
         address=dict(default=None),
         images=dict(default=None),
-        login_username=dict(default='admin'),
-        login_password=dict(required=True),
-        login_tenant_name=dict(required='True'),
-        auth_url=dict(default='http://127.0.0.1:35357/v2.0/'),
-        region_name=dict(default=None),
-        image_id=dict(default=None),
-        flavor_id=dict(default=1),
-        key_name=dict(default=None),
-        security_groups=dict(default='default'),
-        nics=dict(default=None),
-        meta=dict(default=None),
-        wait=dict(default='yes', choices=['yes', 'no']),
-        wait_for=dict(default=180),
-        state=dict(default='present', choices=['absent', 'present']),
-        user_data=dict(default=None)
-    )
+    ))
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -260,6 +239,7 @@ def main():
 
 # import module snippets
 from ansible.module_utils.basic import *
+from ansible.module_utils.openstack import *
 
 ### invoke the module
 main()
