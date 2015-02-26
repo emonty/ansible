@@ -55,11 +55,11 @@ Available versions will be listed on the Ansible Galaxy webpage for that role.
 Advanced Control over Role Requirements Files
 ---------------------------------------------
 
-For more advanced control over where to download roles from, including support for remote repositories, Ansible 1.8 and later support a new YAML format for the role requirements file, which must end in a 'yml' extension.  It works like this::
+For more advanced control over where to download roles from, including support for remote repositories, Ansible 1.8 and later support a new YAML format for the role requirements file, which must end in a valid YAML extension.  It works like this::
 
     ansible-galaxy install -r requirements.yml
 
-The extension is important. If the .yml extension is left off, the ansible-galaxy CLI will assume the file is in the "basic" format and will be confused.
+The extension is important. If the .yml or extension is left off, the ansible-galaxy CLI will assume the file is in the "basic" format and will be confused. ansible in general prefers .yml extensions, but if you prefer .yaml extensions, those are fine too.
 
 And here's an example showing some specific version downloads from multiple sources.  In one of the examples we also override the name of the role and download it as something different::
 
