@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
+# This inventory module is DEPRECATED. Please consider moving to using the
+# openstack.py inventory module.
+
 import sys
 import re
 import os
