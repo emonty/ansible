@@ -152,7 +152,8 @@ class ActionModule(ActionBase):
             scope[self.return_results_as_name] = results
             results = scope
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         if failed:
             result['failed'] = failed

@@ -30,7 +30,8 @@ class ActionModule(ActionBase):
         if self._task.environment:
             self._display.warning('raw module does not support the environment keyword')
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         if self._play_context.check_mode:
             # in --check mode, always skip this module execution

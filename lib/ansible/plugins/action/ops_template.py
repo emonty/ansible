@@ -29,7 +29,7 @@ class ActionModule(NetActionModule, ActionBase):
 
     def run(self, tmp=None, task_vars=None):
         if self._connection.transport == 'local':
-            return super(ActionModule, self).run(tmp, task_vars)
+            return ActionBase.run(self.tmp, task_vars)
 
         result = dict(changed=False)
 

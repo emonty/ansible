@@ -36,7 +36,8 @@ class ActionModule(_ActionModule):
         except (ValueError, AttributeError) as exc:
             return dict(failed=True, msg=exc.message)
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         if self._task.args.get('backup') and result.get('__backup__'):
             # User requested backup and no error occurred in module.

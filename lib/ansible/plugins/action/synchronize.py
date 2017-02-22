@@ -162,7 +162,8 @@ class ActionModule(ActionBase):
         # to our next invocation. Munged args are single use only.
         _tmp_args = self._task.args.copy()
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         # Store remote connection type
         self._remote_transport = self._connection.transport

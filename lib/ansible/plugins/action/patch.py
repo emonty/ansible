@@ -32,7 +32,8 @@ class ActionModule(ActionBase):
         if task_vars is None:
             task_vars = dict()
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         src        = self._task.args.get('src', None)
         remote_src = boolean(self._task.args.get('remote_src', 'no'))

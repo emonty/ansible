@@ -41,7 +41,8 @@ class ActionModule(ActionBase):
         if 'msg' in self._task.args and 'var' in self._task.args:
             return {"failed": True, "msg": "'msg' and 'var' are incompatible options"}
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         verbosity = 0
         # get task verbosity

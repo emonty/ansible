@@ -81,7 +81,8 @@ class ActionModule(ActionBase):
         winrm_host = self._connection._winrm_host
         winrm_port = self._connection._winrm_port
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
         result['warnings'] = []
 
         # Initiate reboot

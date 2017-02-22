@@ -36,7 +36,8 @@ class ActionModule(ActionBase):
         self._supports_check_mode = True
         self._supports_async      = True
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         if result.get('skipped', False):
             return result

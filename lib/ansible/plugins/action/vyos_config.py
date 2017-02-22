@@ -46,7 +46,8 @@ class ActionModule(_ActionModule):
         if self._play_context.connection == 'local':
             result = self.normal(tmp, task_vars)
         else:
-            result = super(ActionModule, self).run(tmp, task_vars)
+            # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         if self._task.args.get('backup') and result.get('__backup__'):
             # User requested backup and no error occurred in module.
@@ -68,7 +69,7 @@ class ActionModule(_ActionModule):
         if task_vars is None:
             task_vars = dict()
 
-        #results = super(ActionModule, self).run(tmp, task_vars)
+        #results = ActionBase.run(self.tmp, task_vars)
         # remove as modules might hide due to nolog
         #del results['invocation']['module_args']
 

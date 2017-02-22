@@ -80,7 +80,7 @@ class ActionModule(_ActionModule):
 
         task_vars['ansible_socket'] = socket_path
 
-        return super(ActionModule, self).run(tmp, task_vars)
+        return ActionBase.run(self.tmp, task_vars)
 
     def _get_socket_path(self, play_context):
         ssh = connection_loader.get('ssh', class_only=True)

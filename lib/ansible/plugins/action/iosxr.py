@@ -70,7 +70,8 @@ class ActionModule(_ActionModule):
 
         task_vars['ansible_socket'] = socket_path
 
-        result = super(ActionModule, self).run(tmp, task_vars)
+        # super can produce infinite recursion in plugin subclasses
+        result = ActionBase.run(self.tmp, task_vars)
 
         # need to make sure to leave config mode if the module didn't clean up
         rc, out, err = connection.exec_command('prompt()')

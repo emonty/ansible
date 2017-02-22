@@ -29,7 +29,7 @@ class ActionModule(ActionBase):
         self._supports_check_mode = True
         self._supports_async      = True
 
-        results = super(ActionModule, self).run(tmp, task_vars)
+        results = ActionBase.run(self.tmp, task_vars)
 
         if not results.get('skipped'):
 
